@@ -218,6 +218,30 @@ body {
   letter-spacing: -.04em;
 }
 
+.front-kana-sub {
+  font-size: 16px;
+  color: #a09070;
+  letter-spacing: .15em;
+  font-family: 'Noto Sans JP', sans-serif;
+  margin-top: 6px;
+  margin-bottom: 14px;
+}
+
+.speak-btn-front {
+  width: 44px; height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--gold-pale);
+  cursor: pointer;
+  font-size: 18px;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.speak-btn-front:hover { background: var(--gold); border-color: var(--gold); }
+
 .front-hint {
   margin-top: 20px;
   font-size: 11px;
@@ -574,6 +598,7 @@ body {
   grid-template-columns: 1fr 1fr;
   gap: 8px;
   margin-bottom: 12px;
+  transition: opacity .15s ease;
 }
 
 .quiz-opt {
@@ -585,10 +610,13 @@ body {
   font-size: 14px;
   color: var(--ink);
   cursor: pointer;
-  transition: all .2s;
+  transition: border-color .2s, background .2s, transform .2s;
   text-align: center;
   line-height: 1.3;
   font-weight: 400;
+  touch-action: manipulation;
+  -webkit-tap-highlight-color: transparent;
+  outline: none;
 }
 
 .quiz-opt:hover:not(:disabled) {
@@ -795,6 +823,10 @@ body {
       <button class="card-mode-btn active" id="cmb-order" onclick="setCardMode('order',this)">順番</button>
       <button class="card-mode-btn" id="cmb-random" onclick="setCardMode('random',this)">ランダム</button>
     </div>
+    <div class="card-mode-row">
+      <button class="card-mode-btn active" id="cfb-num" onclick="setCardFace('num',this)">表：番号　裏：読み方</button>
+      <button class="card-mode-btn" id="cfb-kana" onclick="setCardFace('kana',this)">表：読み方　裏：番号</button>
+    </div>
     <div class="nav">
       <div class="nav-arrows">
         <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
@@ -830,10 +862,10 @@ var TABLES = [
   {n:4,  fr:'quatre',           kana:'キャトル'},
   {n:5,  fr:'cinq',             kana:'サンク'},
   {n:11, fr:'onze',             kana:'オーンズ'},
-  {n:12, fr:'douze',            kana:'ドゥズ'},
+  {n:12, fr:'douze',            kana:'ドゥーズ'},
   {n:13, fr:'treize',           kana:'トレーズ'},
   {n:14, fr:'quatorze',         kana:'キャトルズ'},
-  {n:15, fr:'quinze',           kana:'カンズ'},
+  {n:15, fr:'quinze',           kana:'キャーンズ'},
   {n:16, fr:'seize',            kana:'セーズ'},
   {n:20, fr:'vingt',            kana:'ヴァン'},
   {n:21, fr:'vingt et un',      kana:'ヴァンテアン'},
@@ -858,22 +890,22 @@ var TABLES = [
   {n:51, fr:'cinquante et un',  kana:'サンコンテアン'},
   {n:52, fr:'cinquante-deux',   kana:'サンコンドゥ'},
   {n:53, fr:'cinquante-trois',  kana:'サンコントワ'},
-  {n:54, fr:'cinquante-quatre', kana:'サンコンキャトル'},
+  {n:54, fr:'cinquante-quatre', kana:'サンコントキャトル'},
   {n:55, fr:'cinquante-cinq',   kana:'サンコントサンク'},
-  {n:62, fr:'soixante-deux',    kana:'ソワサンドゥ'},
-  {n:63, fr:'soixante-trois',   kana:'ソワサントワ'},
-  {n:64, fr:'soixante-quatre',  kana:'ソワサンキャトル'},
-  {n:65, fr:'soixante-cinq',    kana:'ソワサンサンク'},
+  {n:62, fr:'soixante-deux',    kana:'ソワソンドゥ'},
+  {n:63, fr:'soixante-trois',   kana:'ソワソントワ'},
+  {n:64, fr:'soixante-quatre',  kana:'ソワソンキャトル'},
+  {n:65, fr:'soixante-cinq',    kana:'ソワソンサンク'},
   {n:71, fr:'soixante et onze', kana:'ソワソントオーンズ', note:'個室 / 団体：シャンブル', tag:'chambre'},
-  {n:72, fr:'soixante-douze',   kana:'ソワサントドゥズ',   note:'個室 / 団体：シャンブル', tag:'chambre'},
-  {n:73, fr:'soixante-treize',  kana:'ソワサントトレーズ', note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:72, fr:'soixante-douze',   kana:'ソワソントドゥーズ',   note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:73, fr:'soixante-treize',  kana:'ソワソントトレーズ', note:'個室 / 団体：シャンブル', tag:'chambre'},
   {n:81, fr:'quatre-vingt-un',  kana:'キャトルヴァンアン', note:'個室 / 団体：シャンブル', tag:'chambre'},
   {n:82, fr:'quatre-vingt-deux',kana:'キャトルヴァンドゥ', note:'個室 / 団体：シャンブル', tag:'chambre'},
   {n:83, fr:'quatre-vingt-trois',kana:'キャトルヴァントワ',note:'個室 / 団体：シャンブル', tag:'chambre'},
 ];
 
-var curTab = 'card', pool = [], idx = 0, flipped = false, cardMode = 'order';
-var quizPool = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false;
+var curTab = 'card', pool = [], idx = 0, flipped = false, cardMode = 'order', cardFace = 'num';
+var quizPool = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false, quizWrong = [], isRetryMode = false;
 
 function speak(text) {
   if (!window.speechSynthesis) return;
@@ -886,6 +918,15 @@ function speak(text) {
 function buildPool() {
   pool = TABLES.slice();
   if (cardMode === 'random') pool = shuffle(pool);
+}
+
+function setCardFace(face, el) {
+  cardFace = face;
+  document.querySelectorAll('#cfb-num, #cfb-kana').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  idx = 0; flipped = false;
+  buildPool();
+  renderCard();
 }
 
 function setCardMode(mode, el) {
@@ -934,23 +975,37 @@ function renderCard() {
 
   // Front
   var tagHtml = t.tag ? '<div class="front-tag '+t.tag+'">'+(t.tag==='las'?'ラス':'個室')+'</div>' : '';
-  var frontEl = document.getElementById('card-front');
-  frontEl.className = 'card-face card-front' + (t.tag ? ' tag-'+t.tag : '');
-  frontEl.innerHTML =
-    tagHtml +
-    '<div class="front-num">' + t.n + '</div>' +
-    '<div class="front-hint"><span class="hint-icon">↻</span>タップしてめくる</div>';
-
-  // Back
   var noteHtml = t.note ? '<div class="back-note">' + t.note + '</div>' : '';
+  var frontEl = document.getElementById('card-front');
   var backEl = document.getElementById('card-back');
+  frontEl.className = 'card-face card-front' + (t.tag ? ' tag-'+t.tag : '');
   backEl.className = 'card-face card-back' + (t.tag ? ' tag-'+t.tag : '');
-  backEl.innerHTML =
-    '<div class="back-table-num">Table ' + t.n + '</div>' +
-    '<div class="back-fr">' + t.fr + '</div>' +
-    '<div class="back-kana">' + t.kana + '</div>' +
-    noteHtml +
-    '<button class="speak-btn" onclick="event.stopPropagation();speak(\'' + t.fr + '\')">🔊</button>';
+
+  if (cardFace === 'num') {
+    // Front: number, Back: reading
+    frontEl.innerHTML =
+      tagHtml +
+      '<div class="front-num">' + t.n + '</div>' +
+      '<div class="front-hint"><span class="hint-icon">↻</span>タップしてめくる</div>';
+    backEl.innerHTML =
+      '<div class="back-table-num">Table ' + t.n + '</div>' +
+      '<div class="back-fr">' + t.fr + '</div>' +
+      '<div class="back-kana">' + t.kana + '</div>' +
+      noteHtml +
+      '<button class="speak-btn" onclick="event.stopPropagation();speak(\'' + t.fr + '\')">🔊</button>';
+  } else {
+    // Front: reading, Back: number
+    frontEl.innerHTML =
+      tagHtml +
+      '<div class="front-num" style="font-size:48px;letter-spacing:.01em;font-style:italic;">' + t.fr + '</div>' +
+      '<div class="front-kana-sub">' + t.kana + '</div>' +
+      '<button class="speak-btn-front" onclick="event.stopPropagation();speak(\'' + t.fr + '\')">🔊</button>' +
+      '<div class="front-hint" style="margin-top:16px;"><span class="hint-icon">↻</span>タップしてめくる</div>';
+    backEl.innerHTML =
+      '<div class="back-table-num">読み方</div>' +
+      '<div class="back-fr" style="font-size:88px;font-style:normal;font-weight:700;letter-spacing:-.04em;">' + t.n + '</div>' +
+      noteHtml;
+  }
 }
 
 function flipCard(e) {
@@ -1022,14 +1077,21 @@ function shuffle(arr) {
 function initQuiz() {
   buildPool();
   quizPool = shuffle(pool);
-  quizIdx = 0; quizCorrect = 0;
+  quizIdx = 0; quizCorrect = 0; quizWrong = []; isRetryMode = false;
   renderQuiz();
 }
 
 function renderQuiz() {
   if (quizIdx >= quizPool.length) { showQuizResult(); return; }
   quizAnswered = false;
-  document.getElementById('quiz-next').classList.remove('show');
+  var nextBtn = document.getElementById('quiz-next');
+  nextBtn.classList.remove('show');
+  nextBtn.textContent = '次へ　→';
+  nextBtn.style.background = '';
+  nextBtn.onclick = nextQuiz;
+  // Remove any retry button from previous result screen
+  var oldRetry = document.getElementById('retry-btn');
+  if (oldRetry) oldRetry.remove();
 
   var t = quizPool[quizIdx];
   var dir = Math.random() < 0.5 ? 'num2fr' : 'fr2num';
@@ -1060,19 +1122,30 @@ function renderQuiz() {
   var opts = shuffle(others.concat([t]));
   var optsEl = document.getElementById('quiz-opts');
   optsEl.innerHTML = '';
+  optsEl.style.opacity = '0';
   opts.forEach(function(o) {
     var btn = document.createElement('button');
     btn.className = 'quiz-opt';
     btn.textContent = dir === 'num2fr' ? o.kana : String(o.n);
-    btn.onclick = function() { answerQuiz(o.n===t.n, btn, t, dir, optsEl); };
+    btn.setAttribute('data-val', dir === 'num2fr' ? o.kana : String(o.n));
+    btn.onclick = function() {
+      if (quizAnswered) return;
+      answerQuiz(o.n===t.n, btn, t, dir, optsEl);
+    };
     optsEl.appendChild(btn);
   });
+  // Delay opacity to prevent ghost hover from previous tap
+  setTimeout(function() { optsEl.style.opacity = ''; }, 80);
 }
 
 function answerQuiz(correct, clickedBtn, t, dir, optsEl) {
-  if (quizAnswered) return;
+  if (quizAnswered || clickedBtn.classList.contains('correct') || clickedBtn.classList.contains('wrong')) return;
   quizAnswered = true;
-  if (correct) quizCorrect++;
+  if (correct) {
+    quizCorrect++;
+  } else {
+    quizWrong.push(t);
+  }
 
   Array.from(optsEl.children).forEach(function(btn) {
     var val = btn.textContent;
@@ -1088,7 +1161,11 @@ function answerQuiz(correct, clickedBtn, t, dir, optsEl) {
     fireParticles();
   }
 
-  document.getElementById('quiz-next').classList.add('show');
+  if (isRetryMode) {
+    setTimeout(function() { nextQuiz(); }, 1200);
+  } else {
+    document.getElementById('quiz-next').classList.add('show');
+  }
 }
 
 function nextQuiz() {
@@ -1116,9 +1193,64 @@ function showQuizResult() {
     '</div>';
   document.getElementById('quiz-opts').innerHTML = '';
   var nextBtn = document.getElementById('quiz-next');
+  if (isRetryMode) {
+    if (quizWrong.length === 0) {
+      // All correct in retry - show 再スタート
+      document.getElementById('quiz-q').innerHTML =
+        '<div class="quiz-result card-reveal">' +
+          '<div class="result-circle"><div class="result-num">✓</div></div>' +
+          '<div class="result-msg">Parfait !</div>' +
+          '<div class="result-sub">全問正解しました！</div>' +
+        '</div>';
+      document.getElementById('quiz-counter').textContent = '全問正解';
+      document.getElementById('quiz-opts').innerHTML = '';
+      nextBtn.textContent = '再スタート';
+      nextBtn.style.background = 'linear-gradient(135deg, var(--teal), var(--sage))';
+      nextBtn.onclick = function() { isRetryMode = false; initQuiz(); };
+      nextBtn.classList.add('show');
+      fireParticles(true);
+    } else {
+      // Still have wrong - show retry again
+      document.getElementById('quiz-q').innerHTML =
+        '<div class="quiz-result card-reveal">' +
+          '<div class="result-circle"><div class="result-num">' + quizWrong.length + '</div></div>' +
+          '<div class="result-msg">もう一息！</div>' +
+          '<div class="result-sub">間違えた ' + quizWrong.length + ' 問をもう一度やり直しましょう。</div>' +
+        '</div>';
+      document.getElementById('quiz-counter').textContent = 'やり直し';
+      document.getElementById('quiz-opts').innerHTML = '';
+      nextBtn.textContent = '間違えた ' + quizWrong.length + ' 問をやり直す';
+      nextBtn.style.background = 'linear-gradient(135deg, var(--coral), var(--rust))';
+      nextBtn.onclick = function() {
+        quizPool = shuffle(quizWrong.slice());
+        quizIdx = 0; quizCorrect = 0; quizWrong = [];
+        nextBtn.onclick = nextQuiz;
+        renderQuiz();
+      };
+      nextBtn.classList.add('show');
+    }
+    return;
+  }
   nextBtn.textContent = 'もう一度やる';
   nextBtn.onclick = initQuiz;
   nextBtn.classList.add('show');
+
+  // Retry wrong answers button
+  if (quizWrong.length > 0) {
+    var retryBtn = document.createElement('button');
+    retryBtn.id = 'retry-btn';
+    retryBtn.className = 'quiz-next show';
+    retryBtn.style.marginTop = '8px';
+    retryBtn.style.background = 'linear-gradient(135deg, var(--coral), var(--rust))';
+    retryBtn.textContent = '間違えた ' + quizWrong.length + '問をやり直す';
+    retryBtn.onclick = function() {
+      quizPool = shuffle(quizWrong.slice());
+      quizIdx = 0; quizCorrect = 0; quizWrong = []; isRetryMode = true;
+      document.getElementById('quiz-next').onclick = nextQuiz;
+      renderQuiz();
+    };
+    document.getElementById('quiz-next').insertAdjacentElement('afterend', retryBtn);
+  }
 
   if (pct === 100) fireParticles(true);
 }
