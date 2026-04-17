@@ -1,0 +1,1172 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>AUX AMIS 卓番</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,700;1,400;1,700&family=DM+Sans:wght@300;400;500&family=Noto+Sans+JP:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root {
+  --ink: #1a1208;
+  --paper: #faf7f2;
+  --cream: #fff8ee;
+  --gold: #d4930a;
+  --gold-light: #f0b830;
+  --gold-pale: #fff8e0;
+  --sage: #3a7a50;
+  --sage-pale: #e4f5eb;
+  --rust: #c05a30;
+  --navy: #2a4a7a;
+  --coral: #e8624a;
+  --teal: #2a8a80;
+  --lavender: #7a5ab8;
+  --border: #e8ddc8;
+  --shadow: rgba(26,18,8,.10);
+  /* card back colors by category */
+  --back-default: #2e5d4b;
+  --back-las: #7a3820;
+  --back-chambre: #2a3d6a;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  min-height: 100vh;
+  background: var(--paper);
+  background-image:
+    radial-gradient(ellipse at 20% 0%, rgba(196,146,42,.08) 0%, transparent 50%),
+    radial-gradient(ellipse at 80% 100%, rgba(74,103,65,.06) 0%, transparent 50%);
+}
+
+body {
+  font-family: 'DM Sans', 'Noto Sans JP', sans-serif;
+  color: var(--ink);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── HEADER ── */
+.header {
+  padding: 28px 24px 0;
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.logo {
+  font-family: 'Playfair Display', serif;
+  font-size: 11px;
+  font-style: italic;
+  letter-spacing: .12em;
+  color: var(--gold);
+  text-transform: uppercase;
+  line-height: 1;
+  margin-bottom: 4px;
+}
+
+.title {
+  font-family: 'Playfair Display', serif;
+  font-size: 26px;
+  font-weight: 700;
+  color: var(--ink);
+  line-height: 1;
+  letter-spacing: -.02em;
+}
+
+.title em {
+  font-style: italic;
+  color: var(--gold);
+}
+
+/* ── TABS ── */
+.tabs {
+  max-width: 600px;
+  margin: 24px auto 0;
+  padding: 0 24px;
+  display: flex;
+  gap: 2px;
+  border-bottom: 1.5px solid var(--border);
+}
+
+.tab {
+  padding: 8px 18px 10px;
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: .06em;
+  color: #8a7a60;
+  cursor: pointer;
+  border: none;
+  background: none;
+  font-family: 'DM Sans', sans-serif;
+  position: relative;
+  transition: color .2s;
+}
+
+.tab::after {
+  content: '';
+  position: absolute;
+  bottom: -1.5px;
+  left: 0; right: 0;
+  height: 2px;
+  background: var(--gold);
+  transform: scaleX(0);
+  transition: transform .25s cubic-bezier(.4,0,.2,1);
+}
+
+.tab.active { color: var(--gold); font-weight: 600; }
+.tab.active::after { transform: scaleX(1); }
+.tab:hover { color: var(--ink); }
+
+/* ── FILTERS ── */
+
+
+/* ── MAIN ── */
+.main {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 28px 24px 80px;
+}
+
+/* ── FLASHCARD ── */
+.scene {
+  perspective: 1200px;
+  margin-bottom: 24px;
+  user-select: none;
+  height: 300px;
+  filter: drop-shadow(0 8px 32px var(--shadow));
+}
+.card-shell {
+  width: 100%;
+  height: 100%;
+  cursor: pointer;
+  -webkit-tap-highlight-color: transparent;
+}
+
+.card {
+  width: 100%;
+  height: 300px;
+  position: relative;
+  transform-style: preserve-3d;
+  transition: transform .65s cubic-bezier(.4,0,.2,1);
+}
+
+.card.flipped { transform: rotateY(180deg); }
+
+.card-face {
+  position: absolute;
+  inset: 0;
+  border-radius: 16px;
+  backface-visibility: hidden;
+  -webkit-backface-visibility: hidden;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 40px 32px;
+  overflow: hidden;
+}
+
+/* Front face */
+.card-front {
+  background: var(--cream);
+  border: 1px solid var(--border);
+}
+.card-front.tag-las { background: #fff5f0; border-color: #e8c0a8; }
+.card-front.tag-chambre { background: #f0f4ff; border-color: #b8c8e8; }
+
+.card-front::before {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1px solid rgba(196,146,42,.2);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.card-front::after {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  border-radius: 16px 16px 0 0;
+}
+
+.front-tag {
+  position: absolute;
+  top: 20px;
+  left: 20px;
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: .18em;
+  text-transform: uppercase;
+  padding: 3px 10px;
+  border-radius: 100px;
+}
+
+.front-tag.las { background: #ffe8e0; color: var(--rust); border: 1px solid #f0b8a0; font-weight: 600; }
+.front-tag.chambre { background: #e8eeff; color: var(--navy); border: 1px solid #a8b8e8; font-weight: 600; }
+
+.front-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 96px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.front-hint {
+  margin-top: 20px;
+  font-size: 11px;
+  color: #a09070;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+}
+
+.hint-icon { display: inline-block; margin-right: 6px; opacity: .5; }
+
+/* Back face */
+.card-back {
+  background: var(--back-default);
+  border: none;
+  transform: rotateY(180deg);
+  transition: background .3s;
+}
+
+.card-back.tag-las { background: var(--back-las); }
+.card-back.tag-chambre { background: var(--back-chambre); }
+
+.card-back::after {
+  content: '';
+  position: absolute;
+  inset: 10px;
+  border: 1.5px solid rgba(255,255,255,.15);
+  border-radius: 10px;
+  pointer-events: none;
+}
+
+.back-table-num {
+  position: absolute;
+  top: 20px;
+  left: 22px;
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: rgba(255,255,255,.3);
+}
+
+.back-fr {
+  font-family: 'Playfair Display', serif;
+  font-size: 52px;
+  font-weight: 400;
+  font-style: italic;
+  color: #fff;
+  line-height: 1.1;
+  text-align: center;
+  margin-bottom: 10px;
+  letter-spacing: .01em;
+}
+
+.back-kana {
+  font-size: 18px;
+  font-weight: 300;
+  color: rgba(255,255,255,.55);
+  letter-spacing: .15em;
+  margin-bottom: 28px;
+  font-family: 'Noto Sans JP', sans-serif;
+}
+
+.back-note {
+  font-size: 11px;
+  color: rgba(255,255,255,.9);
+  letter-spacing: .08em;
+  margin-bottom: 20px;
+  background: rgba(255,255,255,.15);
+  padding: 4px 14px;
+  border-radius: 100px;
+  border: 1px solid rgba(255,255,255,.2);
+}
+
+.speak-btn {
+  width: 52px;
+  height: 52px;
+  border-radius: 50%;
+  border: 1.5px solid rgba(255,255,255,.3);
+  background: rgba(255,255,255,.15);
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 20px;
+  transition: all .2s;
+  color: rgba(255,255,255,.9);
+}
+
+.speak-btn:hover {
+  background: rgba(255,255,255,.3);
+  border-color: rgba(255,255,255,.5);
+  transform: scale(1.08);
+}
+
+/* ── NAVIGATION ── */
+.card-mode-row {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.card-mode-btn {
+  flex: 1;
+  padding: 9px 14px;
+  border-radius: 8px;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 12px;
+  font-weight: 500;
+  color: #8a7a60;
+  cursor: pointer;
+  transition: all .2s;
+  letter-spacing: .04em;
+  text-align: center;
+}
+
+.card-mode-btn:hover { border-color: var(--gold); color: var(--gold); }
+
+.card-mode-btn.active {
+  background: var(--gold);
+  border-color: var(--gold);
+  color: #fff;
+}
+
+.nav {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+}
+
+.nav-arrows {
+  display: flex;
+  gap: 8px;
+}
+
+.nav-btn {
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: var(--cream);
+  cursor: pointer;
+  font-size: 16px;
+  color: #8a7a60;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all .2s;
+  font-family: serif;
+}
+
+.nav-btn:hover:not(:disabled) {
+  border-color: var(--gold);
+  color: var(--gold);
+  background: var(--gold-pale);
+}
+
+.nav-btn:disabled { opacity: .25; cursor: default; }
+
+.nav-progress {
+  flex: 1;
+}
+
+.progress-bar {
+  height: 2px;
+  background: var(--border);
+  border-radius: 2px;
+  overflow: hidden;
+  margin-bottom: 6px;
+}
+
+.progress-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--gold), var(--gold-light));
+  border-radius: 2px;
+  transition: width .5s cubic-bezier(.4,0,.2,1);
+}
+
+.progress-label {
+  font-size: 11px;
+  color: #a09070;
+  letter-spacing: .08em;
+  text-align: center;
+}
+
+/* ── GRID ── */
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 10px;
+}
+
+.grid-card {
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 18px 12px;
+  text-align: center;
+  cursor: pointer;
+  transition: all .22s cubic-bezier(.2,.8,.2,1);
+  position: relative;
+  overflow: hidden;
+}
+.grid-card:nth-child(4n+1) .grid-n { color: var(--gold); }
+.grid-card:nth-child(4n+2) .grid-n { color: var(--teal); }
+.grid-card:nth-child(4n+3) .grid-n { color: var(--coral); }
+.grid-card:nth-child(4n+4) .grid-n { color: var(--lavender); }
+
+.grid-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 2px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+  opacity: 0;
+  transition: opacity .2s;
+}
+
+.grid-card:hover {
+  border-color: var(--gold);
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px var(--shadow);
+}
+
+.grid-card:hover::before { opacity: 1; }
+
+.grid-card:active { transform: translateY(0); }
+
+.grid-n {
+  font-family: 'Playfair Display', serif;
+  font-size: 32px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  margin-bottom: 6px;
+}
+
+.grid-fr {
+  font-family: 'Playfair Display', serif;
+  font-size: 12px;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.3;
+  margin-bottom: 3px;
+}
+
+.grid-kana {
+  font-size: 10px;
+  color: #8a7a60;
+  font-family: 'Noto Sans JP', sans-serif;
+  letter-spacing: .04em;
+}
+
+.grid-tag-badge {
+  display: inline-block;
+  font-size: 8px;
+  letter-spacing: .12em;
+  text-transform: uppercase;
+  margin-top: 5px;
+  padding: 2px 7px;
+  border-radius: 100px;
+}
+
+.grid-tag-badge.las { background: rgba(122,56,32,.1); color: var(--rust); }
+.grid-tag-badge.chambre { background: rgba(30,45,74,.1); color: var(--navy); }
+
+/* ── QUIZ ── */
+.quiz-counter {
+  font-size: 12px;
+  color: #a09070;
+  letter-spacing: .1em;
+  text-align: center;
+  margin-bottom: 20px;
+  font-weight: 500;
+}
+
+.quiz-card {
+  background: var(--cream);
+  background-image: radial-gradient(ellipse at top right, rgba(212,147,10,.06) 0%, transparent 60%);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 40px 28px 32px;
+  text-align: center;
+  margin-bottom: 16px;
+  position: relative;
+  overflow: hidden;
+  box-shadow: 0 4px 24px var(--shadow);
+  transition: transform .3s;
+}
+
+.quiz-card::before {
+  content: '';
+  position: absolute;
+  top: 0; left: 0; right: 0;
+  height: 3px;
+  background: linear-gradient(90deg, transparent, var(--gold), transparent);
+}
+
+.quiz-prompt {
+  font-size: 10px;
+  font-weight: 500;
+  letter-spacing: .2em;
+  text-transform: uppercase;
+  color: #a09070;
+  margin-bottom: 18px;
+}
+
+.quiz-big {
+  font-family: 'Playfair Display', serif;
+  font-size: 80px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+  letter-spacing: -.04em;
+}
+
+.quiz-big-fr {
+  font-family: 'Playfair Display', serif;
+  font-size: 44px;
+  font-weight: 400;
+  font-style: italic;
+  color: var(--ink);
+  line-height: 1.1;
+  margin-bottom: 6px;
+}
+
+.quiz-kana {
+  font-size: 16px;
+  color: #8a7a60;
+  font-family: 'Noto Sans JP', sans-serif;
+  letter-spacing: .1em;
+  margin-top: 6px;
+}
+
+.speak-mini {
+  margin-top: 12px;
+  width: 36px; height: 36px;
+  border-radius: 50%;
+  border: 1.5px solid var(--border);
+  background: transparent;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all .2s;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.speak-mini:hover { background: var(--gold); border-color: var(--gold); }
+
+.quiz-opts {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.quiz-opt {
+  padding: 16px 10px;
+  border: 1.5px solid var(--border);
+  border-radius: 10px;
+  background: var(--cream);
+  font-family: 'Noto Sans JP', sans-serif;
+  font-size: 14px;
+  color: var(--ink);
+  cursor: pointer;
+  transition: all .2s;
+  text-align: center;
+  line-height: 1.3;
+  font-weight: 400;
+}
+
+.quiz-opt:hover:not(:disabled) {
+  border-color: var(--teal);
+  background: #e8f7f5;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(42,138,128,.15);
+}
+
+.quiz-opt:disabled { cursor: default; }
+
+.quiz-opt.correct {
+  border-color: var(--sage);
+  background: var(--sage-pale);
+  color: var(--sage);
+  font-weight: 700;
+  animation: correctBounce .5s cubic-bezier(.34,1.56,.64,1) both;
+}
+
+.quiz-opt.wrong {
+  border-color: #c0504a;
+  background: #fdf0ef;
+  color: #8b2a2a;
+  animation: wrongShake .4s ease both;
+}
+
+.quiz-opt.dim { opacity: .2; pointer-events: none; }
+
+.quiz-next {
+  width: 100%;
+  padding: 15px;
+  border-radius: 10px;
+  border: none;
+  background: linear-gradient(135deg, var(--teal), var(--sage));
+  color: #fff;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  letter-spacing: .06em;
+  transition: all .2s;
+  display: none;
+}
+
+.quiz-next:hover { background: linear-gradient(135deg, var(--gold), var(--coral)); transform: translateY(-2px); box-shadow: 0 6px 20px rgba(212,147,10,.25); }
+.quiz-next.show { display: block; animation: fadeUp .3s ease both; }
+
+/* ── PARTICLES ── */
+#particles { position: fixed; inset: 0; pointer-events: none; z-index: 9999; overflow: hidden; }
+
+.particle {
+  position: absolute;
+  border-radius: 50%;
+  animation: particleFly var(--dur) ease-out forwards;
+}
+
+@keyframes particleFly {
+  0% { transform: translate(0,0) scale(1); opacity: 1; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0); opacity: 0; }
+}
+
+/* ── CORRECT FLASH ── */
+.correct-flash {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(ellipse at center, rgba(196,146,42,.2) 0%, transparent 70%);
+  pointer-events: none;
+  z-index: 9998;
+  opacity: 0;
+  animation: flash .6s ease both;
+}
+
+@keyframes flash {
+  0% { opacity: 0; }
+  30% { opacity: 1; }
+  100% { opacity: 0; }
+}
+
+/* ── ANIMATIONS ── */
+@keyframes correctBounce {
+  0% { transform: scale(.9); }
+  60% { transform: scale(1.06); }
+  100% { transform: scale(1); }
+}
+
+@keyframes wrongShake {
+  0%,100% { transform: translateX(0); }
+  20% { transform: translateX(-8px); }
+  40% { transform: translateX(6px); }
+  60% { transform: translateX(-4px); }
+  80% { transform: translateX(3px); }
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to { opacity: 1; transform: none; }
+}
+
+@keyframes cardReveal {
+  from { opacity: 0; transform: translateY(20px) scale(.97); }
+  to { opacity: 1; transform: none; }
+}
+
+.card-reveal { animation: cardReveal .45s cubic-bezier(.2,.8,.2,1) both; }
+
+/* Result */
+.quiz-result {
+  text-align: center;
+  padding: 48px 24px;
+  background: var(--cream);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  box-shadow: 0 4px 24px var(--shadow);
+  margin-bottom: 16px;
+}
+
+.result-circle {
+  width: 120px;
+  height: 120px;
+  border-radius: 50%;
+  border: 2px solid var(--gold);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  margin: 0 auto 24px;
+  background: var(--gold-pale);
+}
+
+.result-num {
+  font-family: 'Playfair Display', serif;
+  font-size: 40px;
+  font-weight: 700;
+  color: var(--gold);
+  line-height: 1;
+}
+
+.result-denom {
+  font-size: 12px;
+  color: #a09070;
+  margin-top: 2px;
+}
+
+.result-msg {
+  font-family: 'Playfair Display', serif;
+  font-size: 22px;
+  font-style: italic;
+  color: var(--ink);
+  margin-bottom: 8px;
+}
+
+.result-sub {
+  font-size: 13px;
+  color: #8a7a60;
+  margin-bottom: 28px;
+  line-height: 1.7;
+}
+
+.hidden { display: none !important; }
+
+@media (max-width: 480px) {
+  .main { padding: 20px 16px 80px; }
+  .front-num { font-size: 72px; }
+  .back-fr { font-size: 40px; }
+  .quiz-big { font-size: 60px; }
+  .grid { grid-template-columns: repeat(3, 1fr); gap: 8px; }
+  .grid-n { font-size: 26px; }
+  .header { padding: 20px 16px 0; }
+  .tabs { padding: 0 16px; }
+}
+</style>
+</head>
+<body>
+
+<div id="particles"></div>
+
+<header class="header">
+  <div>
+    <div class="logo">Brasserie · Solamachi</div>
+    <div class="title">卓番 <em>Français</em></div>
+  </div>
+</header>
+
+<div class="tabs">
+  <button class="tab active" onclick="switchTab('card',this)">フラッシュカード</button>
+  <button class="tab" onclick="switchTab('grid',this)">一覧</button>
+  <button class="tab" onclick="switchTab('quiz',this)">クイズ</button>
+</div>
+
+
+<div class="main">
+
+  <!-- CARD MODE -->
+  <div id="mode-card">
+    <div class="scene" id="scene">
+      <div class="card-shell" id="card-shell">
+        <div class="card" id="card">
+          <div class="card-face card-front" id="card-front"></div>
+          <div class="card-face card-back" id="card-back"></div>
+        </div>
+      </div>
+    </div>
+    <div class="card-mode-row">
+      <button class="card-mode-btn active" id="cmb-order" onclick="setCardMode('order',this)">順番</button>
+      <button class="card-mode-btn" id="cmb-random" onclick="setCardMode('random',this)">ランダム</button>
+    </div>
+    <div class="nav">
+      <div class="nav-arrows">
+        <button class="nav-btn" id="btn-prev" onclick="navigate(-1)">←</button>
+        <button class="nav-btn" id="btn-next" onclick="navigate(1)">→</button>
+      </div>
+      <div class="nav-progress">
+        <div class="progress-bar"><div class="progress-fill" id="prog-fill" style="width:0%"></div></div>
+        <div class="progress-label" id="prog-label"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- GRID MODE -->
+  <div id="mode-grid" class="hidden">
+    <div class="grid" id="grid-body"></div>
+  </div>
+
+  <!-- QUIZ MODE -->
+  <div id="mode-quiz" class="hidden">
+    <div class="quiz-counter" id="quiz-counter"></div>
+    <div id="quiz-q"></div>
+    <div class="quiz-opts" id="quiz-opts"></div>
+    <button class="quiz-next" id="quiz-next" onclick="nextQuiz()">次へ　→</button>
+  </div>
+
+</div>
+
+<script>
+var TABLES = [
+  {n:1,  fr:'ラス',             kana:'ラス',              note:'フランス語：un（アン）', tag:'las'},
+  {n:2,  fr:'deux',             kana:'ドゥ'},
+  {n:3,  fr:'trois',            kana:'トワ'},
+  {n:4,  fr:'quatre',           kana:'キャトル'},
+  {n:5,  fr:'cinq',             kana:'サンク'},
+  {n:11, fr:'onze',             kana:'オーンズ'},
+  {n:12, fr:'douze',            kana:'ドゥズ'},
+  {n:13, fr:'treize',           kana:'トレーズ'},
+  {n:14, fr:'quatorze',         kana:'キャトルズ'},
+  {n:15, fr:'quinze',           kana:'カンズ'},
+  {n:16, fr:'seize',            kana:'セーズ'},
+  {n:20, fr:'vingt',            kana:'ヴァン'},
+  {n:21, fr:'vingt et un',      kana:'ヴァンテアン'},
+  {n:23, fr:'vingt-trois',      kana:'ヴァントワ'},
+  {n:24, fr:'vingt-quatre',     kana:'ヴァンキャトル'},
+  {n:25, fr:'vingt-cinq',       kana:'ヴァンサンク'},
+  {n:26, fr:'vingt-six',        kana:'ヴァンシス'},
+  {n:27, fr:'vingt-sept',       kana:'ヴァンセット'},
+  {n:28, fr:'vingt-huit',       kana:'ヴァンチュイット'},
+  {n:30, fr:'trente',           kana:'トロント'},
+  {n:31, fr:'trente et un',     kana:'トロンテアン'},
+  {n:32, fr:'trente-deux',      kana:'トロンドゥ'},
+  {n:33, fr:'trente-trois',     kana:'トロントワ'},
+  {n:34, fr:'trente-quatre',    kana:'トロンキャトル'},
+  {n:35, fr:'trente-cinq',      kana:'トロンサンク'},
+  {n:36, fr:'trente-six',       kana:'トロンシス'},
+  {n:41, fr:'quarante et un',   kana:'キャロンテアン'},
+  {n:42, fr:'quarante-deux',    kana:'キャロンドゥ'},
+  {n:43, fr:'quarante-trois',   kana:'キャロントワ'},
+  {n:44, fr:'quarante-quatre',  kana:'キャロンキャトル'},
+  {n:45, fr:'quarante-cinq',    kana:'キャロンサンク'},
+  {n:51, fr:'cinquante et un',  kana:'サンコンテアン'},
+  {n:52, fr:'cinquante-deux',   kana:'サンコンドゥ'},
+  {n:53, fr:'cinquante-trois',  kana:'サンコントワ'},
+  {n:54, fr:'cinquante-quatre', kana:'サンコンキャトル'},
+  {n:55, fr:'cinquante-cinq',   kana:'サンコントサンク'},
+  {n:62, fr:'soixante-deux',    kana:'ソワサンドゥ'},
+  {n:63, fr:'soixante-trois',   kana:'ソワサントワ'},
+  {n:64, fr:'soixante-quatre',  kana:'ソワサンキャトル'},
+  {n:65, fr:'soixante-cinq',    kana:'ソワサンサンク'},
+  {n:71, fr:'soixante et onze', kana:'ソワソントオーンズ', note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:72, fr:'soixante-douze',   kana:'ソワサントドゥズ',   note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:73, fr:'soixante-treize',  kana:'ソワサントトレーズ', note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:81, fr:'quatre-vingt-un',  kana:'キャトルヴァンアン', note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:82, fr:'quatre-vingt-deux',kana:'キャトルヴァンドゥ', note:'個室 / 団体：シャンブル', tag:'chambre'},
+  {n:83, fr:'quatre-vingt-trois',kana:'キャトルヴァントワ',note:'個室 / 団体：シャンブル', tag:'chambre'},
+];
+
+var curTab = 'card', pool = [], idx = 0, flipped = false, cardMode = 'order';
+var quizPool = [], quizIdx = 0, quizCorrect = 0, quizAnswered = false;
+
+function speak(text) {
+  if (!window.speechSynthesis) return;
+  window.speechSynthesis.cancel();
+  var u = new SpeechSynthesisUtterance(text);
+  u.lang = 'fr-FR'; u.rate = 0.85;
+  window.speechSynthesis.speak(u);
+}
+
+function buildPool() {
+  pool = TABLES.slice();
+  if (cardMode === 'random') pool = shuffle(pool);
+}
+
+function setCardMode(mode, el) {
+  cardMode = mode;
+  document.querySelectorAll('.card-mode-btn').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  idx = 0; flipped = false;
+  buildPool();
+  renderCard();
+}
+
+// ── TABS ──
+function switchTab(tab, el) {
+  curTab = tab;
+  document.querySelectorAll('.tab').forEach(function(b){b.classList.remove('active');});
+  el.classList.add('active');
+  ['card','grid','quiz'].forEach(function(m){
+    document.getElementById('mode-'+m).classList.toggle('hidden', m!==tab);
+  });
+  idx = 0; flipped = false;
+  buildPool();
+  if (tab==='quiz') initQuiz();
+  else if (tab==='grid') renderGrid();
+  else renderCard();
+}
+
+// ── CARD ──
+function renderCard() {
+  if (!pool.length) return;
+  var t = pool[idx];
+  var card = document.getElementById('card');
+  card.classList.remove('card-reveal');
+  void card.offsetWidth;
+  card.classList.add('card-reveal');
+  setTimeout(function(){card.classList.remove('card-reveal');}, 500);
+  initCardEvents();
+  var pct = pool.length > 1 ? Math.round((idx/(pool.length-1))*100) : 100;
+  document.getElementById('prog-fill').style.width = pct + '%';
+  document.getElementById('prog-label').textContent = (idx+1) + ' / ' + pool.length;
+  document.getElementById('btn-prev').disabled = idx === 0;
+  document.getElementById('btn-next').disabled = idx === pool.length-1;
+
+  var card = document.getElementById('card');
+  card.classList.remove('flipped');
+  flipped = false;
+
+  // Front
+  var tagHtml = t.tag ? '<div class="front-tag '+t.tag+'">'+(t.tag==='las'?'ラス':'個室')+'</div>' : '';
+  var frontEl = document.getElementById('card-front');
+  frontEl.className = 'card-face card-front' + (t.tag ? ' tag-'+t.tag : '');
+  frontEl.innerHTML =
+    tagHtml +
+    '<div class="front-num">' + t.n + '</div>' +
+    '<div class="front-hint"><span class="hint-icon">↻</span>タップしてめくる</div>';
+
+  // Back
+  var noteHtml = t.note ? '<div class="back-note">' + t.note + '</div>' : '';
+  var backEl = document.getElementById('card-back');
+  backEl.className = 'card-face card-back' + (t.tag ? ' tag-'+t.tag : '');
+  backEl.innerHTML =
+    '<div class="back-table-num">Table ' + t.n + '</div>' +
+    '<div class="back-fr">' + t.fr + '</div>' +
+    '<div class="back-kana">' + t.kana + '</div>' +
+    noteHtml +
+    '<button class="speak-btn" onclick="event.stopPropagation();speak(\'' + t.fr + '\')">🔊</button>';
+}
+
+function flipCard(e) {
+  if (e) { e.preventDefault(); e.stopPropagation(); }
+  flipped = !flipped;
+  document.getElementById('card').classList.toggle('flipped', flipped);
+}
+
+function initCardEvents() {
+  var shell = document.getElementById('card-shell');
+  if (!shell) return;
+  shell.removeEventListener('click', flipCard);
+  shell.removeEventListener('touchend', flipCard);
+  shell.addEventListener('click', flipCard);
+  shell.addEventListener('touchend', flipCard, {passive: false});
+}
+
+function navigate(dir) {
+  var card2 = document.getElementById('card');
+  var card = card2;
+  var outX = dir > 0 ? '-120px' : '120px';
+  card.style.transition = 'transform .25s cubic-bezier(.4,0,1,1), opacity .25s ease';
+  card.style.transform = 'translateX(' + outX + ') rotateY(' + (dir>0?'15':'-15') + 'deg) scale(.92)';
+  card.style.opacity = '0';
+  setTimeout(function() {
+    idx = Math.max(0, Math.min(pool.length-1, idx+dir));
+    card.style.transition = 'none';
+    card.style.transform = 'translateX(' + (dir>0?'80px':'-80px') + ') rotateY(' + (dir>0?'-12':'12') + 'deg) scale(.94)';
+    card.style.opacity = '0';
+    renderCard();
+    setTimeout(function() {
+      card.style.transition = 'transform .4s cubic-bezier(.2,.8,.2,1), opacity .35s ease';
+      card.style.transform = '';
+      card.style.opacity = '';
+      setTimeout(function() { card.style.transition = ''; }, 420);
+    }, 30);
+  }, 240);
+}
+
+// ── GRID ──
+function renderGrid() {
+  var body = document.getElementById('grid-body');
+  body.innerHTML = '';
+  var sorted = TABLES.slice().sort(function(a,b){return a.n-b.n;});
+  sorted.forEach(function(t) {
+    var el = document.createElement('div');
+    el.className = 'grid-card';
+    var tagHtml = t.tag === 'las' ? '<div class="grid-tag-badge las">ラス</div>' :
+                  t.tag === 'chambre' ? '<div class="grid-tag-badge chambre">個室</div>' : '';
+    el.innerHTML =
+      '<div class="grid-n">' + t.n + '</div>' +
+      '<div class="grid-fr">' + t.fr + '</div>' +
+      '<div class="grid-kana">' + t.kana + '</div>' +
+      tagHtml;
+    el.onclick = function() { speak(t.fr); };
+    body.appendChild(el);
+  });
+}
+
+// ── QUIZ ──
+function shuffle(arr) {
+  arr = arr.slice();
+  for (var i=arr.length-1;i>0;i--) {
+    var j=Math.floor(Math.random()*(i+1)), tmp=arr[i]; arr[i]=arr[j]; arr[j]=tmp;
+  }
+  return arr;
+}
+
+function initQuiz() {
+  buildPool();
+  quizPool = shuffle(pool);
+  quizIdx = 0; quizCorrect = 0;
+  renderQuiz();
+}
+
+function renderQuiz() {
+  if (quizIdx >= quizPool.length) { showQuizResult(); return; }
+  quizAnswered = false;
+  document.getElementById('quiz-next').classList.remove('show');
+
+  var t = quizPool[quizIdx];
+  var dir = Math.random() < 0.5 ? 'num2fr' : 'fr2num';
+
+  document.getElementById('quiz-counter').textContent =
+    (quizIdx+1) + ' / ' + quizPool.length + '　　正解 ' + quizCorrect;
+
+  var qEl = document.getElementById('quiz-q');
+  if (dir === 'num2fr') {
+    qEl.innerHTML =
+      '<div class="quiz-card card-reveal">' +
+        '<div class="quiz-prompt">この卓番の読み方は？</div>' +
+        '<div class="quiz-big">' + t.n + '</div>' +
+        (t.note ? '<div style="font-size:11px;color:var(--gold);margin-top:10px;">' + t.note + '</div>' : '') +
+      '</div>';
+  } else {
+    qEl.innerHTML =
+      '<div class="quiz-card card-reveal">' +
+        '<div class="quiz-prompt">この読み方の卓番は？</div>' +
+        '<div class="quiz-big-fr">' + t.fr + '</div>' +
+        '<div class="quiz-kana">' + t.kana + '</div>' +
+        '<button class="speak-mini" onclick="speak(\'' + t.fr + '\')">🔊</button>' +
+      '</div>';
+  }
+
+  // Options
+  var others = shuffle(pool.filter(function(x){return x.n!==t.n;})).slice(0,3);
+  var opts = shuffle(others.concat([t]));
+  var optsEl = document.getElementById('quiz-opts');
+  optsEl.innerHTML = '';
+  opts.forEach(function(o) {
+    var btn = document.createElement('button');
+    btn.className = 'quiz-opt';
+    btn.textContent = dir === 'num2fr' ? o.kana : String(o.n);
+    btn.onclick = function() { answerQuiz(o.n===t.n, btn, t, dir, optsEl); };
+    optsEl.appendChild(btn);
+  });
+}
+
+function answerQuiz(correct, clickedBtn, t, dir, optsEl) {
+  if (quizAnswered) return;
+  quizAnswered = true;
+  if (correct) quizCorrect++;
+
+  Array.from(optsEl.children).forEach(function(btn) {
+    var val = btn.textContent;
+    var isCorrect = dir === 'num2fr' ? val === t.kana : parseInt(val) === t.n;
+    if (isCorrect) btn.classList.add('correct');
+    else if (btn === clickedBtn) btn.classList.add('wrong');
+    else btn.classList.add('dim');
+    btn.disabled = true;
+  });
+
+  if (correct) {
+    speak(t.fr);
+    fireParticles();
+  }
+
+  document.getElementById('quiz-next').classList.add('show');
+}
+
+function nextQuiz() {
+  quizIdx++;
+  renderQuiz();
+}
+
+function showQuizResult() {
+  var pct = Math.round((quizCorrect/quizPool.length)*100);
+  var msg = pct===100 ? 'Parfait !' : pct>=80 ? 'Très bien !' : pct>=60 ? 'Pas mal !' : 'Continuez !';
+  var sub = pct===100 ? '全問正解です。さすがです。' :
+            pct>=80 ? 'よくできました。苦手な番台を絞って練習しましょう。' :
+            pct>=60 ? 'もう一息です。繰り返し練習しましょう。' :
+            'フラッシュカードで基礎を固めてから再挑戦しましょう。';
+
+  document.getElementById('quiz-counter').textContent = '結果';
+  document.getElementById('quiz-q').innerHTML =
+    '<div class="quiz-result card-reveal">' +
+      '<div class="result-circle">' +
+        '<div class="result-num">' + quizCorrect + '</div>' +
+        '<div class="result-denom">/ ' + quizPool.length + '</div>' +
+      '</div>' +
+      '<div class="result-msg">' + msg + '</div>' +
+      '<div class="result-sub">' + sub + '</div>' +
+    '</div>';
+  document.getElementById('quiz-opts').innerHTML = '';
+  var nextBtn = document.getElementById('quiz-next');
+  nextBtn.textContent = 'もう一度やる';
+  nextBtn.onclick = initQuiz;
+  nextBtn.classList.add('show');
+
+  if (pct === 100) fireParticles(true);
+}
+
+// ── PARTICLES ──
+function fireParticles(big) {
+  // flash overlay
+  var flash = document.createElement('div');
+  flash.className = 'correct-flash';
+  document.body.appendChild(flash);
+  setTimeout(function(){flash.remove();}, 700);
+
+  var container = document.getElementById('particles');
+  var count = big ? 60 : 28;
+  var colors = ['#d4930a','#f0b830','#e8624a','#2a8a80','#7a5ab8','#3a7a50','#ffffff','#ffeaa0'];
+  var cx = window.innerWidth / 2;
+  var cy = window.innerHeight / 2;
+
+  for (var i = 0; i < count; i++) {
+    (function() {
+      var p = document.createElement('div');
+      p.className = 'particle';
+      var size = 4 + Math.random() * 10;
+      var angle = Math.random() * Math.PI * 2;
+      var dist = (big ? 220 : 150) + Math.random() * 160;
+      var tx = Math.cos(angle) * dist;
+      var ty = Math.sin(angle) * dist - 80;
+      var dur = 0.6 + Math.random() * 0.7;
+      var color = colors[Math.floor(Math.random()*colors.length)];
+      p.style.cssText =
+        'width:'+size+'px;height:'+size+'px;' +
+        'left:'+(cx + (Math.random()-0.5)*80)+'px;' +
+        'top:'+(cy + (Math.random()-0.5)*80)+'px;' +
+        'background:'+color+';' +
+        '--tx:'+tx+'px;--ty:'+ty+'px;--dur:'+dur+'s;' +
+        'margin:-'+size/2+'px;';
+      // mix shapes
+      if (Math.random() < 0.3) p.style.borderRadius = '2px';
+      container.appendChild(p);
+      setTimeout(function(){p.remove();}, dur*1000+100);
+    })();
+  }
+}
+
+// ── INIT ──
+buildPool();
+renderCard();
+initCardEvents();
+</script>
+</body>
+</html>
